@@ -1,4 +1,5 @@
 /.build/
+/.vscode/
 /target/
 /dist/
 /macos/.build/
