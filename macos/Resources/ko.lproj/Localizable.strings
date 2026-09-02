@@ -1,0 +1,84 @@
+"app.subtitle" = "두벌식 속기";
+"settings.window_title" = "TSS 설정";
+"settings.general" = "일반";
+"settings.dictionary" = "사전";
+"settings.manage_key" = "키 관리";
+"settings.history" = "기록";
+
+"steno.mode" = "속기 모드";
+"steno.on" = "속기 모드 켜짐";
+"steno.off" = "속기 모드 꺼짐";
+"steno.turn_on" = "속기 모드 켜기";
+"steno.turn_off" = "속기 모드 끄기";
+"steno.toggle_on" = "켜짐";
+"steno.toggle_off" = "꺼짐";
+
+"general.accessibility" = "접근성 권한";
+"general.app_display" = "앱 표시";
+"general.show_dock" = "Dock에 표시";
+"general.show_menu_bar" = "메뉴 막대에 표시";
+"general.shortcut" = "단축키";
+
+"accessibility.granted" = "접근성 권한 허용됨";
+"accessibility.required" = "접근성 권한 필요";
+"accessibility.refresh" = "접근성 권한 새로고침";
+
+"shortcut.edit" = "단축키 변경";
+"shortcut.reset" = "기본 단축키로 재설정";
+"shortcut.recording" = "키 조합을 누르세요";
+"shortcut.modifier_required" = "보조키를 하나 이상 함께 눌러 주세요.";
+
+"dictionary.empty.title" = "추가한 사전이 없습니다";
+"dictionary.empty.description" = "JSON 사전을 추가하면 이곳에 표시됩니다.";
+"dictionary.column.enabled" = "사용";
+"dictionary.column.name" = "사전";
+"dictionary.use_accessibility" = "%@ 사용";
+"dictionary.add" = "사전 추가";
+"dictionary.remove" = "선택한 사전 삭제";
+"dictionary.reload" = "사전 다시 불러오기";
+"dictionary.open_panel" = "TSS JSON 사전을 선택하세요.";
+"dictionary.none" = "사전이 없습니다.";
+"dictionary.loaded" = "%d개 파일, %d개 항목";
+"dictionary.read_failed" = "일부 사전을 읽지 못해 마지막 정상 사전을 유지합니다.";
+"dictionary.invalid" = "사전 오류 — 마지막 정상 사전을 유지합니다.";
+"dictionary.load_failed" = "사전을 불러오지 못했습니다.";
+"capture.apply_failed" = "캡처 키를 적용하지 못했습니다.";
+
+"keys.shift" = "Shift";
+"keys.space" = "Space";
+"keys.capture_on" = "캡처함";
+"keys.capture_off" = "통과함";
+"keys.unavailable" = "시스템 전용 키";
+"keys.legend.captured" = "캡처";
+"keys.legend.passthrough" = "통과";
+"keys.legend.unavailable" = "사용 불가";
+
+"history.empty.title" = "아직 기록이 없습니다";
+"history.empty.description" = "속기 모드를 켜고 chord를 입력하면 최근 100개 결과가 표시됩니다.";
+"history.clear" = "기록 지우기";
+"history.column.status" = "상태";
+"history.column.stroke" = "Stroke";
+"history.column.result" = "결과";
+"history.column.time" = "시간";
+"history.success" = "성공";
+"history.failure" = "실패";
+
+"paper_tape" = "페이퍼 테입";
+"paper_tape.mode" = "모드:";
+"paper_tape.empty" = "표시할 키 입력이 없습니다.";
+"paper_tape.accessibility" = "%@ 입력";
+
+"menu.tooltip" = "TSS — 좌클릭: 속기 모드 토글, 우클릭: 메뉴";
+"menu.settings" = "설정…";
+"menu.quit" = "TSS 종료";
+"menu.enabled_description" = "TSS 속기 모드 켜짐";
+"menu.disabled_description" = "TSS 속기 모드 꺼짐";
+
+"event.tap_recovered" = "이벤트 탭을 복구했습니다.";
+"event.cancelled" = "취소: %@";
+"event.input_error" = "입력 오류: %@";
+"event.no_output" = "출력 없음";
+"event.unmapped" = "미등록 stroke";
+"event.context_limit" = "문맥 탐색 한도 초과";
+"event.expired" = "대기 중인 stroke가 만료됨";
+"event.tap_failed" = "전역 키보드 이벤트 탭을 시작하지 못했습니다.";

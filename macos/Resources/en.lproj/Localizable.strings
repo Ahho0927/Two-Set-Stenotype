@@ -1,0 +1,84 @@
+"app.subtitle" = "Two-set Steno";
+"settings.window_title" = "TSS Settings";
+"settings.general" = "General";
+"settings.dictionary" = "Dictionary";
+"settings.manage_key" = "Manage Key";
+"settings.history" = "History";
+
+"steno.mode" = "Steno Mode";
+"steno.on" = "Steno Mode On";
+"steno.off" = "Steno Mode Off";
+"steno.turn_on" = "Turn Steno Mode On";
+"steno.turn_off" = "Turn Steno Mode Off";
+"steno.toggle_on" = "On";
+"steno.toggle_off" = "Off";
+
+"general.accessibility" = "Accessibility Permissions";
+"general.app_display" = "App Display";
+"general.show_dock" = "Show in Dock";
+"general.show_menu_bar" = "Show in Menu Bar";
+"general.shortcut" = "Shortcut";
+
+"accessibility.granted" = "Accessibility permission granted";
+"accessibility.required" = "Accessibility permission required";
+"accessibility.refresh" = "Refresh accessibility permission";
+
+"shortcut.edit" = "Edit shortcut";
+"shortcut.reset" = "Reset to the default shortcut";
+"shortcut.recording" = "Press a key combination";
+"shortcut.modifier_required" = "Include at least one modifier key.";
+
+"dictionary.empty.title" = "No Dictionaries Added";
+"dictionary.empty.description" = "Add a JSON dictionary to see it here.";
+"dictionary.column.enabled" = "On";
+"dictionary.column.name" = "Dictionary";
+"dictionary.use_accessibility" = "Use %@";
+"dictionary.add" = "Add Dictionary";
+"dictionary.remove" = "Remove Selected Dictionary";
+"dictionary.reload" = "Reload Dictionaries";
+"dictionary.open_panel" = "Choose TSS JSON dictionaries.";
+"dictionary.none" = "No dictionaries.";
+"dictionary.loaded" = "%d files, %d entries";
+"dictionary.read_failed" = "Some dictionaries could not be read. The last valid snapshot is still active.";
+"dictionary.invalid" = "Dictionary error — the last valid snapshot is still active.";
+"dictionary.load_failed" = "Unable to load dictionaries.";
+"capture.apply_failed" = "Unable to apply capture keys.";
+
+"keys.shift" = "Shift";
+"keys.space" = "Space";
+"keys.capture_on" = "Captured";
+"keys.capture_off" = "Passed through";
+"keys.unavailable" = "System-reserved key";
+"keys.legend.captured" = "Captured";
+"keys.legend.passthrough" = "Pass-through";
+"keys.legend.unavailable" = "Unavailable";
+
+"history.empty.title" = "No History Yet";
+"history.empty.description" = "Turn on Steno Mode and enter a chord to see the latest 100 results.";
+"history.clear" = "Clear History";
+"history.column.status" = "Status";
+"history.column.stroke" = "Stroke";
+"history.column.result" = "Result";
+"history.column.time" = "Time";
+"history.success" = "Success";
+"history.failure" = "Failed";
+
+"paper_tape" = "Paper Tape";
+"paper_tape.mode" = "Mode:";
+"paper_tape.empty" = "No key input to display.";
+"paper_tape.accessibility" = "%@ input";
+
+"menu.tooltip" = "TSS — left-click: toggle Steno Mode, right-click: menu";
+"menu.settings" = "Settings…";
+"menu.quit" = "Quit TSS";
+"menu.enabled_description" = "TSS Steno Mode on";
+"menu.disabled_description" = "TSS Steno Mode off";
+
+"event.tap_recovered" = "The event tap was restored.";
+"event.cancelled" = "Cancelled: %@";
+"event.input_error" = "Input error: %@";
+"event.no_output" = "No output";
+"event.unmapped" = "Unmapped stroke";
+"event.context_limit" = "Context search limit exceeded";
+"event.expired" = "Pending stroke expired";
+"event.tap_failed" = "Unable to start the global keyboard event tap.";

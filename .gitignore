@@ -1,0 +1,8 @@
+/.build/
+/target/
+/dist/
+/macos/.build/
+/macos/Libraries/*.a
+.DS_Store
+dict.txt
+macro_reference.txt
