@@ -68,7 +68,6 @@
 "paper_tape.empty" = "No key input to display.";
 "paper_tape.accessibility" = "%@ input";
 
-"menu.tooltip" = "TSS — left-click: toggle Steno Mode, right-click: menu";
 "menu.settings" = "Settings…";
 "menu.quit" = "Quit TSS";
 "menu.enabled_description" = "TSS Steno Mode on";

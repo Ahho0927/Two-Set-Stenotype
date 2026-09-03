@@ -36,7 +36,6 @@ final class AppModel: ObservableObject {
     )
     private var pollTimer: Timer?
     private var workspaceObserver: NSObjectProtocol?
-    private var openSettingsAction: (() -> Void)?
 
     private static let dictionariesKey = "TSS.dictionaryRecords.v1"
     private static let captureTokensKey = "TSS.captureTokens.v2"
@@ -156,34 +155,7 @@ final class AppModel: ObservableObject {
     }
 
     func showSettingsWindow() {
-        NSApplication.shared.activate(ignoringOtherApps: true)
-        if let window = NSApplication.shared.windows.first(where: {
-            $0.identifier?.rawValue == "settings"
-                || $0.title == L10n.string("settings.window_title")
-        }) {
-            window.makeKeyAndOrderFront(nil)
-            return
-        }
-        if let openSettingsAction {
-            openSettingsAction()
-            Task { @MainActor in
-                await Task.yield()
-                NSApplication.shared.activate(ignoringOtherApps: true)
-                NSApplication.shared.windows
-                    .first(where: { $0.isVisible && $0.canBecomeKey })?
-                    .makeKeyAndOrderFront(nil)
-            }
-            return
-        }
-        _ = NSApplication.shared.sendAction(
-            Selector(("showSettingsWindow:")),
-            to: nil,
-            from: nil
-        )
-    }
-
-    func setOpenSettingsAction(_ action: @escaping () -> Void) {
-        openSettingsAction = action
+        SettingsWindowController.shared.show(model: self)
     }
 
     func setToggleShortcut(_ shortcut: ToggleShortcut) {

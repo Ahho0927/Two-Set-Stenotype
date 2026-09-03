@@ -4,13 +4,16 @@ import SwiftUI
 
 struct ToggleShortcutRecorder: View {
     @ObservedObject var model: AppModel
+    var showsLabel = true
     @StateObject private var state = ToggleShortcutRecorderState()
 
     var body: some View {
         HStack(spacing: 10) {
-            Text(L10n.string("general.shortcut"))
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            if showsLabel {
+                Text(L10n.string("general.shortcut"))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
 
             if state.isRecording {
                 Text(L10n.string("shortcut.recording"))

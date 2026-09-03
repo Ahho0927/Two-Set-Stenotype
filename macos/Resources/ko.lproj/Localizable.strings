@@ -68,7 +68,6 @@
 "paper_tape.empty" = "표시할 키 입력이 없습니다.";
 "paper_tape.accessibility" = "%@ 입력";
 
-"menu.tooltip" = "TSS — 좌클릭: 속기 모드 토글, 우클릭: 메뉴";
 "menu.settings" = "설정…";
 "menu.quit" = "TSS 종료";
 "menu.enabled_description" = "TSS 속기 모드 켜짐";

@@ -41,7 +41,7 @@ final class StatusItemController: NSObject {
             button.target = self
             button.action = #selector(handleClick(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-            button.toolTip = L10n.string("menu.tooltip")
+            button.toolTip = nil
         }
         statusItem = item
         updateButtonImage()
@@ -79,9 +79,6 @@ final class StatusItemController: NSObject {
         toggleItem.state = isEnabled ? .on : .off
         menu.addItem(toggleItem)
 
-        let status = NSMenuItem(title: dictionaryStatus, action: nil, keyEquivalent: "")
-        status.isEnabled = false
-        menu.addItem(status)
         menu.addItem(.separator())
 
         let settings = NSMenuItem(
