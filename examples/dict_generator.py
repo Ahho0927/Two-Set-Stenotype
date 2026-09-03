@@ -85,8 +85,8 @@ def compose_hangul(cho, jung, jong=None):
     return chr(unicode_val)
 
 
-with open('examples/default_hangul.json', 'w+', encoding='utf-8') as f:
-    f.write('{\n\t"_": " "')
+with open('main_hangul.json', 'w+', encoding='utf-8') as f:
+    f.write('{\n\t"": " "')
 
     for cho_idx in range(19):
         for jung_idx in range(21):
