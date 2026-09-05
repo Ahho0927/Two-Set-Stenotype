@@ -3,8 +3,19 @@
 import AppKit
 import Foundation
 
+// Keep the approved artwork as the source of truth; never redraw the old icon.
+let projectDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .deletingLastPathComponent()
+let sourceURL = projectDirectory.appendingPathComponent("macos/Resources/AppIcon-source.png")
+guard let source = NSImage(contentsOf: sourceURL) else {
+    throw NSError(domain: "CastorIcon", code: 4, userInfo: [
+        NSLocalizedDescriptionKey: "Cannot load approved icon: \(sourceURL.path)",
+    ])
+}
+
 let outputDirectory = URL(
-    fileURLWithPath: CommandLine.arguments.dropFirst().first ?? "macos/Resources",
+    fileURLWithPath: CommandLine.arguments.dropFirst().first ?? projectDirectory.appendingPathComponent("macos/Resources").path,
     isDirectory: true
 )
 let fileManager = FileManager.default
@@ -39,84 +50,25 @@ func renderIcon(pixels: Int) throws -> Data {
         bytesPerRow: 0,
         bitsPerPixel: 0
     ) else {
-        throw NSError(domain: "TSSIcon", code: 1)
+        throw NSError(domain: "CastorIcon", code: 1)
     }
 
     bitmap.size = NSSize(width: size, height: size)
     NSGraphicsContext.saveGraphicsState()
     guard let context = NSGraphicsContext(bitmapImageRep: bitmap) else {
-        throw NSError(domain: "TSSIcon", code: 2)
+        throw NSError(domain: "CastorIcon", code: 2)
     }
     NSGraphicsContext.current = context
     context.imageInterpolation = .high
 
-    let scale = size / 1024
+    let rect = NSRect(x: 0, y: 0, width: size, height: size)
     NSColor.clear.setFill()
-    NSRect(x: 0, y: 0, width: size, height: size).fill()
-
-    let tileRect = NSRect(x: 86 * scale, y: 86 * scale, width: 852 * scale, height: 852 * scale)
-    let tilePath = NSBezierPath(roundedRect: tileRect, xRadius: 204 * scale, yRadius: 204 * scale)
-    let shadow = NSShadow()
-    shadow.shadowColor = NSColor.black.withAlphaComponent(0.32)
-    shadow.shadowBlurRadius = 46 * scale
-    shadow.shadowOffset = NSSize(width: 0, height: -24 * scale)
-    shadow.set()
-    NSGradient(
-        starting: NSColor(calibratedRed: 0.39, green: 0.39, blue: 0.95, alpha: 1),
-        ending: NSColor(calibratedRed: 0.20, green: 0.16, blue: 0.58, alpha: 1)
-    )?.draw(in: tilePath, angle: -62)
-
-    NSGraphicsContext.saveGraphicsState()
-    tilePath.addClip()
-    let highlight = NSBezierPath(ovalIn: NSRect(x: 150 * scale, y: 520 * scale, width: 760 * scale, height: 520 * scale))
-    NSColor.white.withAlphaComponent(0.10).setFill()
-    highlight.fill()
-    NSGraphicsContext.restoreGraphicsState()
-
-    let keySize = NSSize(width: 238 * scale, height: 294 * scale)
-    let origins = [
-        NSPoint(x: 151 * scale, y: 350 * scale),
-        NSPoint(x: 393 * scale, y: 378 * scale),
-        NSPoint(x: 635 * scale, y: 350 * scale),
-    ]
-    let letters = ["T", "S", "S"]
-
-    for (index, origin) in origins.enumerated() {
-        let rect = NSRect(origin: origin, size: keySize)
-        let keyPath = NSBezierPath(roundedRect: rect, xRadius: 62 * scale, yRadius: 62 * scale)
-        let keyShadow = NSShadow()
-        keyShadow.shadowColor = NSColor.black.withAlphaComponent(0.23)
-        keyShadow.shadowBlurRadius = 18 * scale
-        keyShadow.shadowOffset = NSSize(width: 0, height: -12 * scale)
-        keyShadow.set()
-        NSColor.white.withAlphaComponent(0.94).setFill()
-        keyPath.fill()
-
-        NSGraphicsContext.current?.cgContext.setShadow(offset: .zero, blur: 0, color: nil)
-        NSColor.white.withAlphaComponent(0.48).setStroke()
-        keyPath.lineWidth = 5 * scale
-        keyPath.stroke()
-
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
-        let fontSize = max(8, 126 * scale)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: fontSize, weight: .bold),
-            .foregroundColor: NSColor(calibratedRed: 0.24, green: 0.20, blue: 0.62, alpha: 1),
-            .paragraphStyle: paragraph,
-        ]
-        let textRect = NSRect(
-            x: rect.minX,
-            y: rect.midY - fontSize * 0.55,
-            width: rect.width,
-            height: fontSize * 1.2
-        )
-        letters[index].draw(in: textRect, withAttributes: attributes)
-    }
+    rect.fill(using: .copy)
+    source.draw(in: rect, from: .zero, operation: .copy, fraction: 1)
 
     NSGraphicsContext.restoreGraphicsState()
     guard let data = bitmap.representation(using: .png, properties: [:]) else {
-        throw NSError(domain: "TSSIcon", code: 3)
+        throw NSError(domain: "CastorIcon", code: 3)
     }
     return data
 }

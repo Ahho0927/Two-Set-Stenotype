@@ -3,12 +3,12 @@ set -euo pipefail
 
 SCRIPT_DIRECTORY="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIRECTORY="$(cd "$SCRIPT_DIRECTORY/.." && pwd)"
-APP_DIRECTORY="$PROJECT_DIRECTORY/dist/TSS.app"
+APP_DIRECTORY="$PROJECT_DIRECTORY/dist/Castor.app"
 INFO_PLIST="$PROJECT_DIRECTORY/macos/Resources/Info.plist"
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")"
-OUTPUT_DMG="$PROJECT_DIRECTORY/dist/TSS-$VERSION.dmg"
-STAGING_DIRECTORY="$(mktemp -d /tmp/tss-dmg-root.XXXXXX)"
-TEMPORARY_DMG="$(mktemp /tmp/tss-dmg.XXXXXX).dmg"
+OUTPUT_DMG="$PROJECT_DIRECTORY/dist/Castor-$VERSION.dmg"
+STAGING_DIRECTORY="$(mktemp -d /tmp/castor-dmg-root.XXXXXX)"
+TEMPORARY_DMG="$(mktemp /tmp/castor-dmg.XXXXXX).dmg"
 
 cleanup() {
   rm -rf "$STAGING_DIRECTORY"
@@ -19,13 +19,13 @@ trap cleanup EXIT
 "$SCRIPT_DIRECTORY/build-macos.sh"
 codesign --verify --deep --strict "$APP_DIRECTORY"
 
-ditto "$APP_DIRECTORY" "$STAGING_DIRECTORY/TSS.app"
-xattr -cr "$STAGING_DIRECTORY/TSS.app"
-codesign --verify --deep --strict "$STAGING_DIRECTORY/TSS.app"
+ditto "$APP_DIRECTORY" "$STAGING_DIRECTORY/Castor.app"
+xattr -cr "$STAGING_DIRECTORY/Castor.app"
+codesign --verify --deep --strict "$STAGING_DIRECTORY/Castor.app"
 ln -s /Applications "$STAGING_DIRECTORY/Applications"
 
 hdiutil create \
-  -volname "TSS" \
+  -volname "Castor" \
   -srcfolder "$STAGING_DIRECTORY" \
   -format UDZO \
   -imagekey zlib-level=9 \

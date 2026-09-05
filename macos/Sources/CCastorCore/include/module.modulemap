@@ -1,0 +1,5 @@
+module CCastorCore {
+    header "castor_core.h"
+    export *
+}
+

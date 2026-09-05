@@ -8,7 +8,7 @@ final class EventTapController: @unchecked Sendable {
     private let core: CoreBridge
     private let contextProvider: ContextProvider
     private let emitter: TextEmitter
-    private let resolutionQueue = DispatchQueue(label: "app.tss.stroke-resolution")
+    private let resolutionQueue = DispatchQueue(label: "app.castor.stroke-resolution")
     private let onRecord: RecordHandler
     private let onToggleShortcut: @Sendable () -> Void
     private let stateLock = NSLock()

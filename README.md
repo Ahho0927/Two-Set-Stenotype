@@ -1,6 +1,6 @@
-<h1 align="center">Two-Set Stenotype</h1>
+<h1 align="center">Castor</h1>
 
-TSS는 일반 두벌식 키보드 자판을 활용해 새롭게 구상한 두벌식 속기 키보드입니다.
+Castor는 일반적인 키보드 자판을 속기키보드로 사용할 수 있도록 도와주는 프로그램입니다.
 
 ## 빌드
 
@@ -12,7 +12,7 @@ TSS는 일반 두벌식 키보드 자판을 활용해 새롭게 구상한 두벌
 ./scripts/build-macos.sh
 ```
 
-완성된 로컬 앱은 `dist/TSS.app`에 생성됩니다.
+완성된 로컬 앱은 `dist/Castor.app`에 생성됩니다.
 
 ### DMG
 
@@ -20,17 +20,18 @@ TSS는 일반 두벌식 키보드 자판을 활용해 새롭게 구상한 두벌
 ./scripts/build-dmg.sh
 ```
 
-앱을 다시 빌드하고 검증한 뒤 `Applications` 바로가기가 포함된 `dist/TSS-<버전>.dmg`를 만듭니다.
+앱을 다시 빌드하고 검증한 뒤 `Applications` 바로가기가 포함된 `dist/Castor-<버전>.dmg`를 만듭니다.
 
 ## 빠른 시작
 
 앱을 실행하기 위해서는 빌드를 해야 합니다. 빌드 항목을 확인하십시오.\
 앱은 접근성 권한을 필요로 합니다. 앱 실행 시 macOS 권한요청을 표시합니다.
 
-속기 모드는 기본적으로 꺼져 있습니다. 앱에서 직접 켜고 끄거나, 단축키(기본 `fn+T`)를 사용해 켜고 끌 수 있습니다.
+속기 모드는 기본적으로 꺼져 있습니다. 메뉴바 혹은 앱에서 직접 켜고 끄거나, 단축키(기본 `fn+T`)를 사용해 켜고 끌 수 있습니다.
 
 속기를 하기 위해서는 사전이 필요합니다. 사전 메뉴에서 사전을 추가할 수 있습니다.\
-기본적으로 [예제 사전](examples/)이 적용되어 있습니다. 앱을 실행하면 바로 시작할 수 있습니다.
+기본적으로 [예제 사전](examples/)이 적용되어 있습니다. 앱을 실행하면 바로 시작할 수 있습니다.\
+예제 사전의 사용법은 [설명서](examples/README.dict.md)를 참고하십시오.
 
 ## 사전 형식
 
@@ -85,9 +86,19 @@ TSS는 일반 두벌식 키보드 자판을 활용해 새롭게 구상한 두벌
 
 ## 구조
 
-- `crates/tss-core`: OS 독립적인 사전·stroke·문맥 엔진
-- `crates/tss-ffi`: Swift와 연결하는 C ABI 정적 라이브러리
-- `macos/Sources/TSSApp`: SwiftUI 메뉴 막대 앱과 macOS 입력 어댑터
+- `crates/castor-core`: OS 독립적인 사전·stroke·문맥 엔진
+- `crates/castor-ffi`: Swift와 연결하는 C ABI 정적 라이브러리
+- `macos/Sources/CastorApp`: SwiftUI 메뉴 막대 앱과 macOS 입력 어댑터
 - `examples`: 사전 예제
 
 [!] 일부 보안 입력란과 합성 Unicode 이벤트를 별도로 처리하는 앱에서는 macOS 제약으로 출력되지 않을 수 있습니다.
+
+## 말뭉치 분석
+
+한국어 말뭉치에서 음절·어절·형태소 빈도를 집계하려면
+[분석 도구](analysis/README.md)를 사용하십시오.
+
+## TODO
+
+- [] Add launch at login
+- [] Make a document for default dictionary

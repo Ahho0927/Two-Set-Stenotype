@@ -6,22 +6,22 @@ use std::slice;
 use std::sync::Mutex;
 
 use serde::Deserialize;
-use tss_core::{
+use castor_core::{
     ContextConfidence, DictionarySnapshot, DictionarySource, Engine, EventDisposition, KeyEvent,
     KeyState, OutputAction, PhysicalKey, ResolveStatus, SelectionState, TextContext,
 };
 
-pub struct TssEngine {
+pub struct CastorEngine {
     inner: Mutex<Engine>,
 }
 
 #[repr(C)]
-pub struct TssBuffer {
+pub struct CastorBuffer {
     pub ptr: *mut u8,
     pub len: usize,
 }
 
-impl TssBuffer {
+impl CastorBuffer {
     fn empty() -> Self {
         Self {
             ptr: ptr::null_mut(),
@@ -48,7 +48,7 @@ impl TssBuffer {
 }
 
 #[repr(C)]
-pub struct TssKeyEvent {
+pub struct CastorKeyEvent {
     pub key_code: u16,
     /// 0 = down, 1 = up.
     pub state: u8,
@@ -56,7 +56,7 @@ pub struct TssKeyEvent {
 }
 
 #[repr(C)]
-pub struct TssKeyDecision {
+pub struct CastorKeyDecision {
     /// 0 = pass, 1 = suppress.
     pub disposition: u8,
     /// 0 = none, 1 = completed, 2 = cancelled, 3 = invalid event.
@@ -65,10 +65,10 @@ pub struct TssKeyDecision {
     pub reserved: u8,
     pub pending_id: u64,
     /// Completed chord or cancellation/error detail.
-    pub detail: TssBuffer,
+    pub detail: CastorBuffer,
 }
 
-impl TssKeyDecision {
+impl CastorKeyDecision {
     fn pass_error(message: impl Into<String>) -> Self {
         Self {
             disposition: 0,
@@ -76,13 +76,13 @@ impl TssKeyDecision {
             needs_context: 0,
             reserved: 0,
             pending_id: 0,
-            detail: TssBuffer::from_string(message),
+            detail: CastorBuffer::from_string(message),
         }
     }
 }
 
 #[repr(C)]
-pub struct TssTextContext {
+pub struct CastorTextContext {
     pub text_ptr: *const u8,
     pub text_len: usize,
     /// 0 = authoritative, 1 = tracked, 2 = unknown.
@@ -94,7 +94,7 @@ pub struct TssTextContext {
 }
 
 #[repr(C)]
-pub struct TssResolveResult {
+pub struct CastorResolveResult {
     /// 0 = matched, 1 = unmapped, 2 = context unavailable, 3 = context limit, 4 = expired.
     pub status: u8,
     pub delete_selection: u8,
@@ -103,26 +103,26 @@ pub struct TssResolveResult {
     /// 0 = none, 1 = enter, 2 = tab, 3 = backspace, 4 = escape.
     pub basic_key: u8,
     pub delete_before: u32,
-    pub text: TssBuffer,
-    pub stroke: TssBuffer,
+    pub text: CastorBuffer,
+    pub stroke: CastorBuffer,
 }
 
 #[repr(C)]
-pub struct TssOperationResult {
+pub struct CastorOperationResult {
     pub ok: u8,
     pub reserved: [u8; 3],
     pub count: u32,
     /// A JSON-encoded structured error on failure.
-    pub detail: TssBuffer,
+    pub detail: CastorBuffer,
 }
 
-impl TssOperationResult {
+impl CastorOperationResult {
     fn success(count: usize) -> Self {
         Self {
             ok: 1,
             reserved: [0; 3],
             count: count.min(u32::MAX as usize) as u32,
-            detail: TssBuffer::empty(),
+            detail: CastorBuffer::empty(),
         }
     }
 
@@ -131,7 +131,7 @@ impl TssOperationResult {
             ok: 0,
             reserved: [0; 3],
             count: 0,
-            detail: TssBuffer::from_string(value.to_string()),
+            detail: CastorBuffer::from_string(value.to_string()),
         }
     }
 
@@ -149,18 +149,18 @@ struct SourceEnvelope {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn tss_engine_new() -> *mut TssEngine {
-    Box::into_raw(Box::new(TssEngine {
+pub extern "C" fn castor_engine_new() -> *mut CastorEngine {
+    Box::into_raw(Box::new(CastorEngine {
         inner: Mutex::new(Engine::default()),
     }))
 }
 
 #[unsafe(no_mangle)]
 /// # Safety
-/// `engine` must be null or a live pointer returned by `tss_engine_new`, and it must be freed once.
-pub unsafe extern "C" fn tss_engine_free(engine: *mut TssEngine) {
+/// `engine` must be null or a live pointer returned by `castor_engine_new`, and it must be freed once.
+pub unsafe extern "C" fn castor_engine_free(engine: *mut CastorEngine) {
     if !engine.is_null() {
-        // SAFETY: The caller promises this pointer came from tss_engine_new and is freed once.
+        // SAFETY: The caller promises this pointer came from castor_engine_new and is freed once.
         unsafe { drop(Box::from_raw(engine)) };
     }
 }
@@ -168,31 +168,31 @@ pub unsafe extern "C" fn tss_engine_free(engine: *mut TssEngine) {
 #[unsafe(no_mangle)]
 /// # Safety
 /// `buffer` must be empty or an owned buffer returned by this library, and it must be freed once.
-pub unsafe extern "C" fn tss_buffer_free(buffer: TssBuffer) {
+pub unsafe extern "C" fn castor_buffer_free(buffer: CastorBuffer) {
     if !buffer.ptr.is_null() && buffer.len > 0 {
         let slice_ptr = ptr::slice_from_raw_parts_mut(buffer.ptr, buffer.len);
-        // SAFETY: TssBuffer allocations are boxed slices created by TssBuffer::from_bytes.
+        // SAFETY: CastorBuffer allocations are boxed slices created by CastorBuffer::from_bytes.
         unsafe { drop(Box::from_raw(slice_ptr)) };
     }
 }
 
 #[unsafe(no_mangle)]
 /// # Safety
-/// `engine` must be a live pointer returned by `tss_engine_new`.
-pub unsafe extern "C" fn tss_engine_process_key(
-    engine: *mut TssEngine,
-    event: TssKeyEvent,
-) -> TssKeyDecision {
+/// `engine` must be a live pointer returned by `castor_engine_new`.
+pub unsafe extern "C" fn castor_engine_process_key(
+    engine: *mut CastorEngine,
+    event: CastorKeyEvent,
+) -> CastorKeyDecision {
     let Some(engine) = (unsafe { engine.as_ref() }) else {
-        return TssKeyDecision::pass_error("engine is null");
+        return CastorKeyDecision::pass_error("engine is null");
     };
     let Some(key) = PhysicalKey::from_hid_usage(event.key_code) else {
-        return TssKeyDecision::pass_error(format!("unsupported HID key: {}", event.key_code));
+        return CastorKeyDecision::pass_error(format!("unsupported HID key: {}", event.key_code));
     };
     let state = match event.state {
         0 => KeyState::Down,
         1 => KeyState::Up,
-        other => return TssKeyDecision::pass_error(format!("invalid key state: {other}")),
+        other => return CastorKeyDecision::pass_error(format!("invalid key state: {other}")),
     };
     let mut inner = engine
         .inner
@@ -205,32 +205,32 @@ pub unsafe extern "C" fn tss_engine_process_key(
     });
     let disposition = u8::from(result.disposition == EventDisposition::Suppress);
     if let Some(completed) = result.completed {
-        return TssKeyDecision {
+        return CastorKeyDecision {
             disposition,
             completion: 1,
             needs_context: u8::from(completed.needs_context),
             reserved: 0,
             pending_id: completed.id,
-            detail: TssBuffer::from_string(completed.stroke),
+            detail: CastorBuffer::from_string(completed.stroke),
         };
     }
     if let Some(reason) = result.cancelled {
-        return TssKeyDecision {
+        return CastorKeyDecision {
             disposition,
             completion: 2,
             needs_context: 0,
             reserved: 0,
             pending_id: 0,
-            detail: TssBuffer::from_string(reason.message()),
+            detail: CastorBuffer::from_string(reason.message()),
         };
     }
-    TssKeyDecision {
+    CastorKeyDecision {
         disposition,
         completion: 0,
         needs_context: 0,
         reserved: 0,
         pending_id: 0,
-        detail: TssBuffer::empty(),
+        detail: CastorBuffer::empty(),
     }
 }
 
@@ -238,11 +238,11 @@ pub unsafe extern "C" fn tss_engine_process_key(
 /// # Safety
 /// `engine` must be live. When non-null, `context` and its text buffer must remain readable
 /// for the duration of the call.
-pub unsafe extern "C" fn tss_engine_resolve(
-    engine: *mut TssEngine,
+pub unsafe extern "C" fn castor_engine_resolve(
+    engine: *mut CastorEngine,
     pending_id: u64,
-    context: *const TssTextContext,
-) -> TssResolveResult {
+    context: *const CastorTextContext,
+) -> CastorResolveResult {
     let Some(engine) = (unsafe { engine.as_ref() }) else {
         return expired_resolve_result();
     };
@@ -262,32 +262,32 @@ pub unsafe extern "C" fn tss_engine_resolve(
     };
     let stroke = result
         .stroke
-        .map(TssBuffer::from_string)
-        .unwrap_or_else(TssBuffer::empty);
+        .map(CastorBuffer::from_string)
+        .unwrap_or_else(CastorBuffer::empty);
     let Some(plan) = result.plan else {
-        return TssResolveResult {
+        return CastorResolveResult {
             status,
             delete_selection: 0,
             output_kind: 0,
             basic_key: 0,
             delete_before: 0,
-            text: TssBuffer::empty(),
+            text: CastorBuffer::empty(),
             stroke,
         };
     };
     let (output_kind, basic_key, text) = match plan.output {
-        OutputAction::Text(text) => (1, 0, TssBuffer::from_string(text)),
+        OutputAction::Text(text) => (1, 0, CastorBuffer::from_string(text)),
         OutputAction::Key(key) => {
             let value = match key {
-                tss_core::BasicKey::Enter => 1,
-                tss_core::BasicKey::Tab => 2,
-                tss_core::BasicKey::Backspace => 3,
-                tss_core::BasicKey::Escape => 4,
+                castor_core::BasicKey::Enter => 1,
+                castor_core::BasicKey::Tab => 2,
+                castor_core::BasicKey::Backspace => 3,
+                castor_core::BasicKey::Escape => 4,
             };
-            (2, value, TssBuffer::empty())
+            (2, value, CastorBuffer::empty())
         }
     };
-    TssResolveResult {
+    CastorResolveResult {
         status,
         delete_selection: u8::from(plan.delete_selection),
         output_kind,
@@ -301,21 +301,21 @@ pub unsafe extern "C" fn tss_engine_resolve(
 #[unsafe(no_mangle)]
 /// # Safety
 /// `engine` must be live and `json_ptr` must address `json_len` readable bytes.
-pub unsafe extern "C" fn tss_engine_replace_dictionaries(
-    engine: *mut TssEngine,
+pub unsafe extern "C" fn castor_engine_replace_dictionaries(
+    engine: *mut CastorEngine,
     json_ptr: *const u8,
     json_len: usize,
-) -> TssOperationResult {
+) -> CastorOperationResult {
     let Some(engine) = (unsafe { engine.as_ref() }) else {
-        return TssOperationResult::error_message("engine is null");
+        return CastorOperationResult::error_message("engine is null");
     };
     let Some(bytes) = (unsafe { input_bytes(json_ptr, json_len) }) else {
-        return TssOperationResult::error_message("dictionary input is null");
+        return CastorOperationResult::error_message("dictionary input is null");
     };
     let envelopes: Vec<SourceEnvelope> = match serde_json::from_slice(bytes) {
         Ok(value) => value,
         Err(error) => {
-            return TssOperationResult::error_message(format!(
+            return CastorOperationResult::error_message(format!(
                 "invalid dictionary source envelope: {error}"
             ));
         }
@@ -333,7 +333,7 @@ pub unsafe extern "C" fn tss_engine_replace_dictionaries(
         Err(error) => {
             let detail = serde_json::to_value(error)
                 .unwrap_or_else(|_| serde_json::json!({"message":"dictionary error"}));
-            return TssOperationResult::error_json(detail);
+            return CastorOperationResult::error_json(detail);
         }
     };
     let count = snapshot.len();
@@ -342,22 +342,22 @@ pub unsafe extern "C" fn tss_engine_replace_dictionaries(
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner());
     inner.install_dictionary(snapshot);
-    TssOperationResult::success(count)
+    CastorOperationResult::success(count)
 }
 
 #[unsafe(no_mangle)]
 /// # Safety
 /// `engine` must be live and `keys_ptr` must address `keys_len` readable `u16` values.
-pub unsafe extern "C" fn tss_engine_set_captured_keys(
-    engine: *mut TssEngine,
+pub unsafe extern "C" fn castor_engine_set_captured_keys(
+    engine: *mut CastorEngine,
     keys_ptr: *const u16,
     keys_len: usize,
-) -> TssOperationResult {
+) -> CastorOperationResult {
     let Some(engine) = (unsafe { engine.as_ref() }) else {
-        return TssOperationResult::error_message("engine is null");
+        return CastorOperationResult::error_message("engine is null");
     };
     if keys_ptr.is_null() && keys_len > 0 {
-        return TssOperationResult::error_message("captured key input is null");
+        return CastorOperationResult::error_message("captured key input is null");
     }
     let usages = if keys_len == 0 {
         &[][..]
@@ -368,7 +368,7 @@ pub unsafe extern "C" fn tss_engine_set_captured_keys(
     let mut keys = HashSet::new();
     for usage in usages {
         let Some(key) = PhysicalKey::from_hid_usage(*usage) else {
-            return TssOperationResult::error_message(format!(
+            return CastorOperationResult::error_message(format!(
                 "unsupported captured HID key: {usage}"
             ));
         };
@@ -380,13 +380,13 @@ pub unsafe extern "C" fn tss_engine_set_captured_keys(
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner());
     inner.set_captured_keys(keys);
-    TssOperationResult::success(count)
+    CastorOperationResult::success(count)
 }
 
 #[unsafe(no_mangle)]
 /// # Safety
-/// `engine` must be null or a live pointer returned by `tss_engine_new`.
-pub unsafe extern "C" fn tss_engine_reset_input(engine: *mut TssEngine) {
+/// `engine` must be null or a live pointer returned by `castor_engine_new`.
+pub unsafe extern "C" fn castor_engine_reset_input(engine: *mut CastorEngine) {
     if let Some(engine) = unsafe { engine.as_ref() } {
         engine
             .inner
@@ -398,8 +398,8 @@ pub unsafe extern "C" fn tss_engine_reset_input(engine: *mut TssEngine) {
 
 #[unsafe(no_mangle)]
 /// # Safety
-/// `engine` must be null or a live pointer returned by `tss_engine_new`.
-pub unsafe extern "C" fn tss_engine_interrupt(engine: *mut TssEngine) -> u8 {
+/// `engine` must be null or a live pointer returned by `castor_engine_new`.
+pub unsafe extern "C" fn castor_engine_interrupt(engine: *mut CastorEngine) -> u8 {
     let Some(engine) = (unsafe { engine.as_ref() }) else {
         return 0;
     };
@@ -413,7 +413,7 @@ pub unsafe extern "C" fn tss_engine_interrupt(engine: *mut TssEngine) -> u8 {
     )
 }
 
-fn read_context(context: &TssTextContext) -> Option<TextContext> {
+fn read_context(context: &CastorTextContext) -> Option<TextContext> {
     let confidence = match context.confidence {
         0 => ContextConfidence::Authoritative,
         1 => ContextConfidence::Tracked,
@@ -444,15 +444,15 @@ unsafe fn input_bytes<'a>(pointer: *const u8, length: usize) -> Option<&'a [u8]>
     Some(unsafe { slice::from_raw_parts(pointer, length) })
 }
 
-fn expired_resolve_result() -> TssResolveResult {
-    TssResolveResult {
+fn expired_resolve_result() -> CastorResolveResult {
+    CastorResolveResult {
         status: 4,
         delete_selection: 0,
         output_kind: 0,
         basic_key: 0,
         delete_before: 0,
-        text: TssBuffer::empty(),
-        stroke: TssBuffer::empty(),
+        text: CastorBuffer::empty(),
+        stroke: CastorBuffer::empty(),
     }
 }
 
@@ -462,17 +462,17 @@ mod tests {
 
     #[test]
     fn ffi_round_trip_for_space_translation() {
-        let engine = tss_engine_new();
+        let engine = castor_engine_new();
         let sources = br#"[{"id":"main","name":"main.json","json":"{\"_\":\" \"}"}]"#;
         let loaded =
-            unsafe { tss_engine_replace_dictionaries(engine, sources.as_ptr(), sources.len()) };
+            unsafe { castor_engine_replace_dictionaries(engine, sources.as_ptr(), sources.len()) };
         assert_eq!(loaded.ok, 1);
-        unsafe { tss_buffer_free(loaded.detail) };
+        unsafe { castor_buffer_free(loaded.detail) };
 
         let down = unsafe {
-            tss_engine_process_key(
+            castor_engine_process_key(
                 engine,
-                TssKeyEvent {
+                CastorKeyEvent {
                     key_code: PhysicalKey::Space as u16,
                     state: 0,
                     is_repeat: 0,
@@ -480,11 +480,11 @@ mod tests {
             )
         };
         assert_eq!(down.disposition, 1);
-        unsafe { tss_buffer_free(down.detail) };
+        unsafe { castor_buffer_free(down.detail) };
         let up = unsafe {
-            tss_engine_process_key(
+            castor_engine_process_key(
                 engine,
-                TssKeyEvent {
+                CastorKeyEvent {
                     key_code: PhysicalKey::Space as u16,
                     state: 1,
                     is_repeat: 0,
@@ -492,17 +492,17 @@ mod tests {
             )
         };
         assert_eq!(up.completion, 1);
-        unsafe { tss_buffer_free(up.detail) };
+        unsafe { castor_buffer_free(up.detail) };
 
-        let resolved = unsafe { tss_engine_resolve(engine, up.pending_id, ptr::null()) };
+        let resolved = unsafe { castor_engine_resolve(engine, up.pending_id, ptr::null()) };
         assert_eq!(resolved.status, 0);
         assert_eq!(resolved.output_kind, 1);
         let text = unsafe { slice::from_raw_parts(resolved.text.ptr, resolved.text.len) };
         assert_eq!(text, b" ");
         unsafe {
-            tss_buffer_free(resolved.text);
-            tss_buffer_free(resolved.stroke);
-            tss_engine_free(engine);
+            castor_buffer_free(resolved.text);
+            castor_buffer_free(resolved.stroke);
+            castor_engine_free(engine);
         }
     }
 }

@@ -1,5 +1,5 @@
 "app.subtitle" = "두벌식 속기";
-"settings.window_title" = "TSS 설정";
+"settings.window_title" = "Castor 설정";
 "settings.general" = "일반";
 "settings.dictionary" = "사전";
 "settings.manage_key" = "키 관리";
@@ -36,7 +36,7 @@
 "dictionary.add" = "사전 추가";
 "dictionary.remove" = "선택한 사전 삭제";
 "dictionary.reload" = "사전 다시 불러오기";
-"dictionary.open_panel" = "TSS JSON 사전을 선택하세요.";
+"dictionary.open_panel" = "Castor JSON 사전을 선택하세요.";
 "dictionary.none" = "사전이 없습니다.";
 "dictionary.loaded" = "%d개 파일, %d개 항목";
 "dictionary.read_failed" = "일부 사전을 읽지 못해 마지막 정상 사전을 유지합니다.";
@@ -69,9 +69,9 @@
 "paper_tape.accessibility" = "%@ 입력";
 
 "menu.settings" = "설정…";
-"menu.quit" = "TSS 종료";
-"menu.enabled_description" = "TSS 속기 모드 켜짐";
-"menu.disabled_description" = "TSS 속기 모드 꺼짐";
+"menu.quit" = "Castor 종료";
+"menu.enabled_description" = "Castor 속기 모드 켜짐";
+"menu.disabled_description" = "Castor 속기 모드 꺼짐";
 
 "event.tap_recovered" = "이벤트 탭을 복구했습니다.";
 "event.cancelled" = "취소: %@";

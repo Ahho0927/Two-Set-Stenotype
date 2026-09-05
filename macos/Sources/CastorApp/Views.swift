@@ -28,7 +28,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
     }
 
     var toolbarIdentifier: NSToolbarItem.Identifier {
-        NSToolbarItem.Identifier("app.tss.settings.\(rawValue)")
+        NSToolbarItem.Identifier("app.castor.settings.\(rawValue)")
     }
 
     var preferredContentSize: NSSize {

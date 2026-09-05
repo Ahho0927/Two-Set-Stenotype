@@ -7,24 +7,24 @@ let repositoryRoot = URL(fileURLWithPath: #filePath)
     .path
 
 let package = Package(
-    name: "TSS",
+    name: "Castor",
     platforms: [.macOS(.v14)],
     products: [
-        .executable(name: "TSSApp", targets: ["TSSApp"]),
+        .executable(name: "CastorApp", targets: ["CastorApp"]),
     ],
     targets: [
         .target(
-            name: "CTSSCore",
-            path: "macos/Sources/CTSSCore",
+            name: "CCastorCore",
+            path: "macos/Sources/CCastorCore",
             publicHeadersPath: "include"
         ),
         .executableTarget(
-            name: "TSSApp",
-            dependencies: ["CTSSCore"],
-            path: "macos/Sources/TSSApp",
+            name: "CastorApp",
+            dependencies: ["CCastorCore"],
+            path: "macos/Sources/CastorApp",
             linkerSettings: [
                 .unsafeFlags(["-L\(repositoryRoot)/target/release"]),
-                .linkedLibrary("tss_ffi"),
+                .linkedLibrary("castor_ffi"),
                 .linkedFramework("AppKit"),
                 .linkedFramework("ApplicationServices"),
                 .linkedFramework("CoreGraphics"),

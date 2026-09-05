@@ -50,7 +50,7 @@ struct TextTracker: Sendable {
             text = ""
             valid = true
             self.processIdentifier = processIdentifier
-            // The text before the first observed TSS output is unknown. Keeping this
+            // The text before the first observed Castor output is unknown. Keeping this
             // flag set lets the core reject a lookup that would have to cross it.
             wasTruncated = true
         }

@@ -1,4 +1,4 @@
-import CTSSCore
+import CCastorCore
 import Foundation
 
 struct BridgeError: LocalizedError, Sendable {
@@ -10,20 +10,20 @@ final class CoreBridge: @unchecked Sendable {
     private let handle: OpaquePointer
 
     init() {
-        guard let engine = tss_engine_new() else {
-            fatalError("Unable to create TSS core engine")
+        guard let engine = castor_engine_new() else {
+            fatalError("Unable to create Castor core engine")
         }
         handle = engine
     }
 
     deinit {
-        tss_engine_free(handle)
+        castor_engine_free(handle)
     }
 
     func process(key: HIDKey, isDown: Bool, isRepeat: Bool) -> EngineKeyDecision {
-        let raw = tss_engine_process_key(
+        let raw = castor_engine_process_key(
             handle,
-            TssKeyEvent(
+            CastorKeyEvent(
                 key_code: key.rawValue,
                 state: isDown ? 0 : 1,
                 is_repeat: isRepeat ? 1 : 0
@@ -49,11 +49,11 @@ final class CoreBridge: @unchecked Sendable {
     }
 
     func resolve(_ stroke: CompletedStrokeInfo, context: CursorContext?) -> StrokeResolution {
-        let raw: TssResolveResult
+        let raw: CastorResolveResult
         if let context {
             let contextBytes = Array(context.precedingText.utf8)
             raw = contextBytes.withUnsafeBufferPointer { bytes in
-                var ffiContext = TssTextContext(
+                var ffiContext = CastorTextContext(
                     text_ptr: bytes.baseAddress,
                     text_len: bytes.count,
                     confidence: context.confidence.rawValue,
@@ -61,10 +61,10 @@ final class CoreBridge: @unchecked Sendable {
                     was_truncated: context.wasTruncated ? 1 : 0,
                     reserved: 0
                 )
-                return tss_engine_resolve(handle, stroke.id, &ffiContext)
+                return castor_engine_resolve(handle, stroke.id, &ffiContext)
             }
         } else {
-            raw = tss_engine_resolve(handle, stroke.id, nil)
+            raw = castor_engine_resolve(handle, stroke.id, nil)
         }
 
         let outputText = consume(raw.text)
@@ -104,7 +104,7 @@ final class CoreBridge: @unchecked Sendable {
         }
         let data = try JSONSerialization.data(withJSONObject: payload)
         let raw = data.withUnsafeBytes { bytes in
-            tss_engine_replace_dictionaries(
+            castor_engine_replace_dictionaries(
                 handle,
                 bytes.bindMemory(to: UInt8.self).baseAddress,
                 bytes.count
@@ -122,7 +122,7 @@ final class CoreBridge: @unchecked Sendable {
     func setCapturedKeys(_ keys: Set<HIDKey>) throws {
         let values = keys.map(\.rawValue)
         let raw = values.withUnsafeBufferPointer { buffer in
-            tss_engine_set_captured_keys(
+            castor_engine_set_captured_keys(
                 handle,
                 buffer.baseAddress,
                 buffer.count
@@ -137,21 +137,21 @@ final class CoreBridge: @unchecked Sendable {
     }
 
     func resetInput() {
-        tss_engine_reset_input(handle)
+        castor_engine_reset_input(handle)
     }
 
     @discardableResult
     func interrupt() -> Bool {
-        tss_engine_interrupt(handle) != 0
+        castor_engine_interrupt(handle) != 0
     }
 
-    private func consume(_ buffer: TssBuffer) -> String {
+    private func consume(_ buffer: CastorBuffer) -> String {
         guard let pointer = buffer.ptr, buffer.len > 0 else {
-            tss_buffer_free(buffer)
+            castor_buffer_free(buffer)
             return ""
         }
         let data = Data(bytes: pointer, count: buffer.len)
-        tss_buffer_free(buffer)
+        castor_buffer_free(buffer)
         return String(decoding: data, as: UTF8.self)
     }
 }

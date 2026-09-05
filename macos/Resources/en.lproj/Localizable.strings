@@ -1,5 +1,5 @@
 "app.subtitle" = "Two-set Steno";
-"settings.window_title" = "TSS Settings";
+"settings.window_title" = "Castor Settings";
 "settings.general" = "General";
 "settings.dictionary" = "Dictionary";
 "settings.manage_key" = "Manage Key";
@@ -36,7 +36,7 @@
 "dictionary.add" = "Add Dictionary";
 "dictionary.remove" = "Remove Selected Dictionary";
 "dictionary.reload" = "Reload Dictionaries";
-"dictionary.open_panel" = "Choose TSS JSON dictionaries.";
+"dictionary.open_panel" = "Choose Castor JSON dictionaries.";
 "dictionary.none" = "No dictionaries.";
 "dictionary.loaded" = "%d files, %d entries";
 "dictionary.read_failed" = "Some dictionaries could not be read. The last valid snapshot is still active.";
@@ -69,9 +69,9 @@
 "paper_tape.accessibility" = "%@ input";
 
 "menu.settings" = "Settings…";
-"menu.quit" = "Quit TSS";
-"menu.enabled_description" = "TSS Steno Mode on";
-"menu.disabled_description" = "TSS Steno Mode off";
+"menu.quit" = "Quit Castor";
+"menu.enabled_description" = "Castor Steno Mode on";
+"menu.disabled_description" = "Castor Steno Mode off";
 
 "event.tap_recovered" = "The event tap was restored.";
 "event.cancelled" = "Cancelled: %@";

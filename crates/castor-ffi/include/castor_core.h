@@ -1,5 +1,5 @@
-#ifndef TSS_CORE_H
-#define TSS_CORE_H
+#ifndef CASTOR_CORE_H
+#define CASTOR_CORE_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -8,18 +8,18 @@
 extern "C" {
 #endif
 
-typedef struct TssEngine TssEngine;
+typedef struct CastorEngine CastorEngine;
 
 typedef struct {
     uint8_t *ptr;
     size_t len;
-} TssBuffer;
+} CastorBuffer;
 
 typedef struct {
     uint16_t key_code;
     uint8_t state;
     uint8_t is_repeat;
-} TssKeyEvent;
+} CastorKeyEvent;
 
 typedef struct {
     uint8_t disposition;
@@ -27,8 +27,8 @@ typedef struct {
     uint8_t needs_context;
     uint8_t reserved;
     uint64_t pending_id;
-    TssBuffer detail;
-} TssKeyDecision;
+    CastorBuffer detail;
+} CastorKeyDecision;
 
 typedef struct {
     const uint8_t *text_ptr;
@@ -37,7 +37,7 @@ typedef struct {
     uint8_t selection;
     uint8_t was_truncated;
     uint8_t reserved;
-} TssTextContext;
+} CastorTextContext;
 
 typedef struct {
     uint8_t status;
@@ -45,39 +45,39 @@ typedef struct {
     uint8_t output_kind;
     uint8_t basic_key;
     uint32_t delete_before;
-    TssBuffer text;
-    TssBuffer stroke;
-} TssResolveResult;
+    CastorBuffer text;
+    CastorBuffer stroke;
+} CastorResolveResult;
 
 typedef struct {
     uint8_t ok;
     uint8_t reserved[3];
     uint32_t count;
-    TssBuffer detail;
-} TssOperationResult;
+    CastorBuffer detail;
+} CastorOperationResult;
 
-TssEngine *tss_engine_new(void);
-void tss_engine_free(TssEngine *engine);
-void tss_buffer_free(TssBuffer buffer);
+CastorEngine *castor_engine_new(void);
+void castor_engine_free(CastorEngine *engine);
+void castor_buffer_free(CastorBuffer buffer);
 
-TssKeyDecision tss_engine_process_key(TssEngine *engine, TssKeyEvent event);
-TssResolveResult tss_engine_resolve(
-    TssEngine *engine,
+CastorKeyDecision castor_engine_process_key(CastorEngine *engine, CastorKeyEvent event);
+CastorResolveResult castor_engine_resolve(
+    CastorEngine *engine,
     uint64_t pending_id,
-    const TssTextContext *context
+    const CastorTextContext *context
 );
-TssOperationResult tss_engine_replace_dictionaries(
-    TssEngine *engine,
+CastorOperationResult castor_engine_replace_dictionaries(
+    CastorEngine *engine,
     const uint8_t *json_ptr,
     size_t json_len
 );
-TssOperationResult tss_engine_set_captured_keys(
-    TssEngine *engine,
+CastorOperationResult castor_engine_set_captured_keys(
+    CastorEngine *engine,
     const uint16_t *keys_ptr,
     size_t keys_len
 );
-void tss_engine_reset_input(TssEngine *engine);
-uint8_t tss_engine_interrupt(TssEngine *engine);
+void castor_engine_reset_input(CastorEngine *engine);
+uint8_t castor_engine_interrupt(CastorEngine *engine);
 
 #ifdef __cplusplus
 }

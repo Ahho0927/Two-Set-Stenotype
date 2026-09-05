@@ -3,7 +3,7 @@ import QuartzCore
 import SwiftUI
 
 @main
-struct TSSApplication: App {
+struct CastorApplication: App {
     @StateObject private var model = AppModel()
 
     var body: some Scene {
@@ -29,7 +29,7 @@ final class SettingsWindowController: NSObject, NSToolbarDelegate {
     static let shared = SettingsWindowController()
 
     private let navigation = SettingsNavigationState()
-    private let toolbarIdentifier = NSToolbar.Identifier("app.tss.settings.toolbar")
+    private let toolbarIdentifier = NSToolbar.Identifier("app.castor.settings.toolbar")
     private var windowController: NSWindowController?
 
     private override init() {

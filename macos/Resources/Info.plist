@@ -10,15 +10,15 @@
 		<string>en</string>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>TSSApp</string>
+	<string>CastorApp</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>app.tss.keyboard</string>
+    <string>app.castor.keyboard</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>TSS</string>
+    <string>Castor</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

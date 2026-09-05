@@ -2,7 +2,7 @@ import CoreGraphics
 import Foundation
 
 @main
-struct TSSSwiftSmokeTests {
+struct CastorSwiftSmokeTests {
     static func main() {
         check(KeyCodeMapper.hidKey(for: 18) == .digit1, "number key mapping")
         check(KeyCodeMapper.hidKey(for: 39) == .quote, "quote key mapping")

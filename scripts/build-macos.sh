@@ -5,17 +5,17 @@ SCRIPT_DIRECTORY="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIRECTORY="$(cd "$SCRIPT_DIRECTORY/.." && pwd)"
 BUILD_DIRECTORY="$PROJECT_DIRECTORY/.build"
 MODULE_CACHE="$BUILD_DIRECTORY/module-cache"
-APP_EXECUTABLE="$BUILD_DIRECTORY/TSSApp-release"
-APP_DIRECTORY="$PROJECT_DIRECTORY/dist/TSS.app"
-RUST_BUILD_DIRECTORY="/tmp/tss-cargo-target"
-STAGING_DIRECTORY="$(mktemp -d /tmp/tss-app-build.XXXXXX)"
-STAGED_APP="$STAGING_DIRECTORY/TSS.app"
+APP_EXECUTABLE="$BUILD_DIRECTORY/CastorApp-release"
+APP_DIRECTORY="$PROJECT_DIRECTORY/dist/Castor.app"
+RUST_BUILD_DIRECTORY="/tmp/castor-cargo-target"
+STAGING_DIRECTORY="$(mktemp -d /tmp/castor-app-build.XXXXXX)"
+STAGED_APP="$STAGING_DIRECTORY/Castor.app"
 trap 'rm -rf "$STAGING_DIRECTORY"' EXIT
 
 mkdir -p "$MODULE_CACHE"
 cd "$PROJECT_DIRECTORY"
 
-CARGO_TARGET_DIR="$RUST_BUILD_DIRECTORY" cargo build -p tss-ffi --release
+CARGO_TARGET_DIR="$RUST_BUILD_DIRECTORY" cargo build -p castor-ffi --release
 
 SDK_PATH="$(xcrun --show-sdk-path)"
 SDK_INTERFACE_FILE="$(find "$SDK_PATH/usr/lib/swift/Swift.swiftmodule" -name '*-apple-macos.swiftinterface' | head -n 1)"
@@ -35,10 +35,10 @@ fi
 
 swiftc \
   "${SWIFT_ARGUMENTS[@]}" \
-  "$PROJECT_DIRECTORY"/macos/Sources/TSSApp/*.swift \
-  -I "$PROJECT_DIRECTORY/macos/Sources/CTSSCore/include" \
+  "$PROJECT_DIRECTORY"/macos/Sources/CastorApp/*.swift \
+  -I "$PROJECT_DIRECTORY/macos/Sources/CCastorCore/include" \
   -L "$RUST_BUILD_DIRECTORY/release" \
-  -ltss_ffi \
+  -lcastor_ffi \
   -framework AppKit \
   -framework ApplicationServices \
   -framework CoreGraphics \
@@ -46,7 +46,7 @@ swiftc \
 
 mkdir -p "$STAGED_APP/Contents/MacOS" "$STAGED_APP/Contents/Resources"
 mkdir -p "$STAGED_APP/Contents/Resources/Dictionaries"
-cp "$APP_EXECUTABLE" "$STAGED_APP/Contents/MacOS/TSSApp"
+cp "$APP_EXECUTABLE" "$STAGED_APP/Contents/MacOS/CastorApp"
 cp "$PROJECT_DIRECTORY/macos/Resources/Info.plist" "$STAGED_APP/Contents/Info.plist"
 cp "$PROJECT_DIRECTORY/macos/Resources/AppIcon.icns" "$STAGED_APP/Contents/Resources/AppIcon.icns"
 cp "$PROJECT_DIRECTORY/examples/main.json" "$STAGED_APP/Contents/Resources/Dictionaries/main.json"

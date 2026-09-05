@@ -37,12 +37,12 @@ final class AppModel: ObservableObject {
     private var pollTimer: Timer?
     private var workspaceObserver: NSObjectProtocol?
 
-    private static let dictionariesKey = "TSS.dictionaryRecords.v1"
-    private static let captureTokensKey = "TSS.captureTokens.v2"
-    private static let legacyCaptureTokensKey = "TSS.captureTokens.v1"
-    private static let toggleShortcutKey = "TSS.toggleShortcut.v1"
-    private static let showsDockIconKey = "TSS.showsDockIcon.v1"
-    private static let showsMenuBarIconKey = "TSS.showsMenuBarIcon.v1"
+    private static let dictionariesKey = "Castor.dictionaryRecords.v1"
+    private static let captureTokensKey = "Castor.captureTokens.v2"
+    private static let legacyCaptureTokensKey = "Castor.captureTokens.v1"
+    private static let toggleShortcutKey = "Castor.toggleShortcut.v1"
+    private static let showsDockIconKey = "Castor.showsDockIcon.v1"
+    private static let showsMenuBarIconKey = "Castor.showsMenuBarIcon.v1"
     private static let bundledDictionaryNames = ["main", "main_hangul"]
 
     init() {

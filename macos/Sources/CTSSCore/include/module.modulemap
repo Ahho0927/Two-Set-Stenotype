@@ -1,5 +1,0 @@
-module CTSSCore {
-    header "tss_core.h"
-    export *
-}
-

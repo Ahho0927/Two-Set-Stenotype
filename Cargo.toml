@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/tss-core", "crates/tss-ffi"]
+members = ["crates/castor-core", "crates/castor-ffi"]
 resolver = "2"
 
 [workspace.package]
